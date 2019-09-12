@@ -15,10 +15,9 @@
  */
 package com.example.android.pets;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +29,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.pets.data.PetsContract;
@@ -120,12 +118,10 @@ public class EditorActivity extends AppCompatActivity {
         String name = mNameEditText.getText().toString().trim();
         String breed = mBreedEditText.getText().toString().trim();
         String weightString = mWeightEditText.getText().toString().trim();
-        int weight = 0;
+        Integer weight = null;
         if(!weightString.isEmpty()){
             weight = Integer.parseInt(weightString);
         }
-
-        SQLiteDatabase db = mDb.getReadableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(PetsContract.PetsEntry.COLUMN_PET_NAME, name);
@@ -133,8 +129,10 @@ public class EditorActivity extends AppCompatActivity {
         contentValues.put(PetsContract.PetsEntry.COLUMN_PET_GENDER, mGender);
         contentValues.put(PetsContract.PetsEntry.COLUMN_PET_WEIGHT, weight);
 
+        Uri uri = getContentResolver().insert(PetsContract.PetsEntry.CONTENT_URI, contentValues);
 
-        long result = db.insert(PetsContract.PetsEntry.TABLE_NAME, null, contentValues);
+
+        long result = (ContentUris.parseId(uri));
 
         if(result != -1) {
 
